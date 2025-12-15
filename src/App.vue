@@ -52,7 +52,7 @@ onMounted(() => {
     subjects.value = JSON.parse(saved)
   } else {
     subjects.value = [
-      { id: 1, name: "Matte", minutes: 0, inputMinutes: 0 },
+      { id: 1, name: "Matte2", minutes: 0, inputMinutes: 0 },
       { id: 2, name: "Programmering", minutes: 0, inputMinutes: 0 },
     ]
   }
@@ -69,11 +69,7 @@ watch(subjects, () => {
 
     <!-- ADD SUBJECT -->
     <div class="add">
-      <input
-        v-model="newSubjectName"
-        placeholder="Nytt fag"
-        @keyup.enter="addSubject"
-      />
+      <input v-model="newSubjectName" placeholder="Nytt fag" @keyup.enter="addSubject" />
       <button @click="addSubject">Legg til</button>
     </div>
 
@@ -84,12 +80,7 @@ watch(subjects, () => {
         — {{ subject.minutes }} min
 
         <div class="inline">
-          <input
-            type="number"
-            min="1"
-            v-model.number="subject.inputMinutes"
-            placeholder="Min"
-          />
+          <input type="number" min="1" v-model.number="subject.inputMinutes" placeholder="Min" />
           <button @click="addMinutes(subject)">➕</button>
           <button @click="removeSubject(subject.id)">❌</button>
         </div>
