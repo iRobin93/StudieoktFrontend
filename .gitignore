@@ -288,6 +288,13 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+
+# Build output
+dist/
+
+# Environment files
+.env
+.env.local
 # Visual Studio 6 build log
 *.plg
 
