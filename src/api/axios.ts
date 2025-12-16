@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:7216", // your .NET backend URL
+  baseURL: import.meta.env.VITE_API_BASE_URL, // your .NET backend URL
   timeout: 5000, // optional timeout
   headers: {
     "Content-Type": "application/json",

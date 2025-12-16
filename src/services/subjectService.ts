@@ -1,7 +1,7 @@
 import api from "../api/axios";
 
-export const getSubjects = async () => {
-  const response = await api.get("/subject");
+export const getSubjects = async (date) => {
+  const response = await api.get("/subject/bydate/" + date.value);
   return response.data;
 };
 
