@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from "vue"
-import { getSubjects, addSubject } from "./services/subjectService";
+import { getSubjects, addSubject, deleteSubject } from "./services/subjectService";
 import { getSessions, createSession } from "./services/sessionService";
 import SessionsModal from "./components/SessionsModal.vue";
 // ---------------- TYPES ----------------
@@ -8,13 +8,6 @@ type Subject = {
   id: number
   name: string
   totalMinutes: number
-}
-
-type Session = {
-  id: number
-  subjectId: number
-  minutes: number
-  date: string
 }
 
 type SubjectInput = {
@@ -98,13 +91,27 @@ const openSessionsModal = async () => {
 };
 
 
-const closeSessionsModal = () => {
-  showSessionsModal.value = false;
+const handleRemoveSubject = async (id: number) => {
+  const confirmed = window.confirm("Er du sikker på at du vil slette dette faget?");
+  if (!confirmed) return;
+
+  try {
+    await deleteSubject(id);
+    await fetchSubjects();
+  } catch (error) {
+    console.error("Could not delete subject:", error);
+    alert("Noe gikk galt ved sletting av fag.");
+  }
 };
 
-const removeSubject = (id: number) => {
-  subjects.value = subjects.value.filter(s => s.id !== id)
-}
+const handleRefresh = async () => {
+  await fetchSubjects();
+  sessions.value = await getSessions(selectedDate.value);
+};
+
+const handleCloseSessionsModal = async () => {
+  showSessionsModal.value = false;
+};
 
 onMounted(() => {
   fetchSubjects();
@@ -141,8 +148,8 @@ onMounted(() => {
 
           <input type="datetime-local" v-model="subjectInputs[subject.id].selectedDateTime" />
 
-          <button @click="handleAddSession(subject)">➕</button>
-          <button @click="removeSubject(subject.id)">❌</button>
+          <button title="Legg til økt" @click="handleAddSession(subject)">➕</button>
+          <button title="Slett fag" @click="handleRemoveSubject(subject.id)">❌</button>
         </div>
 
       </li>
@@ -152,11 +159,13 @@ onMounted(() => {
     <!-- TOTAL -->
     <h3>📊 Total i dag: {{ totalMinutesToday }} min</h3>
     <button @click="openSessionsModal">Se økter</button>
-    <SessionsModal :visible="showSessionsModal" :sessions="sessions" :date="selectedDate" @close="closeSessionsModal" />
-
+    <SessionsModal :visible="showSessionsModal" :sessions="sessions" :date="selectedDate"
+      @close="handleCloseSessionsModal" @refresh="handleRefresh" />
 
   </div>
 </template>
+
+
 
 <style scoped>
 .app {

@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { getSessions } from "@/services/sessionService";
+import api from "../api/axios";
 
 interface Session {
     id: number;
     subjectName: string;
     minutes: number;
     startedAt: string;
+    subjectId: number;
 }
 
 const props = defineProps<{
@@ -13,13 +16,30 @@ const props = defineProps<{
     date: string;
 }>();
 
-const emit = defineEmits<{
-    (e: "close"): void;
-}>();
-
 const closeModal = () => {
     emit("close");
 };
+
+const emit = defineEmits<{
+    (e: "close"): void;
+    (e: "refresh"): void;
+}>();
+
+const handleDeleteSession = async (sessionId: number) => {
+    const confirmed = window.confirm("Er du sikker på at du vil slette denne økten?");
+    if (!confirmed) return;
+
+    try {
+        await api.delete("/session/" + sessionId);
+        emit("refresh");
+    } catch (err) {
+        console.error("Failed to delete session:", err);
+        alert("Noe gikk galt ved sletting av økten.");
+    }
+};
+
+
+
 </script>
 
 <template>
@@ -27,14 +47,18 @@ const closeModal = () => {
         <div class="modal">
             <h2>Økter for {{ date }}</h2>
             <ul>
-                <li v-for="s in sessions" :key="s.id">
+                <li v-for="s in sessions" :key="s.id" class="session-item">
                     {{ s.subjectName }} — {{ s.minutes }} min — {{ s.startedAt }}
+                    <button @click="handleDeleteSession(s.id)" title="Slett økten">❌</button>
                 </li>
             </ul>
             <button @click="closeModal">Lukk</button>
         </div>
     </div>
 </template>
+
+
+
 
 <style scoped>
 .modal-overlay {
