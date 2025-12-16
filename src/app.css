@@ -1,0 +1,188 @@
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+h1 {
+  margin: 1rem 0 1.5rem;
+}
+
+.date-picker,
+.add {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.add input {
+  flex: 1;
+}
+
+input,
+button {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* TABLE HEADER - Improved alignment */
+.table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 1.5fr;
+  align-items: center;
+  font-weight: 600;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 2px solid #ddd;
+  margin-top: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 4px 4px 0 0;
+}
+
+/* TABLE - Ensure consistent column widths */
+.table {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 1.5fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* Add consistent padding/margin to header spans */
+.table-header span {
+  padding: 0 0.25rem;
+}
+
+/* Align specific columns */
+.table-header span:nth-child(1) {
+  /* Fag */
+  padding-left: 0.5rem;
+}
+
+.table-header span:nth-child(2), /* Tot. Min */
+.table-header span:nth-child(3) {
+  /* Minutter */
+  text-align: center;
+}
+
+.table-header span:nth-child(4) {
+  /* Starttid */
+  padding-left: 0.5rem;
+}
+
+/* Align row content to match headers */
+.row .subject-name {
+  font-weight: 500;
+  padding-left: 0.5rem;
+}
+
+.row span:nth-child(2), /* Total minutes */
+.row input[type="number"] {
+  /* Minutes input */
+  justify-self: center;
+  width: 80px;
+  text-align: center;
+}
+
+.row input[type="datetime-local"] {
+  justify-self: start;
+  min-width: 180px;
+}
+
+.actions {
+  justify-self: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Center the number input text */
+input[type="number"] {
+  text-align: center;
+}
+/* TOTAL & SESSIONS */
+.sessions-btn {
+  margin-top: 0.75rem;
+}
+
+h3 {
+  margin-top: 1.5rem;
+}
+
+/* Overlay covers entire screen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  /* ensures modal is on top of everything */
+}
+
+/* Modal box styling */
+.modal {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  /* ensures modal content is above overlay */
+}
+
+/* Optional: style close button */
+.modal button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* More specific alignment if needed */
+.header-fag {
+  grid-column: 1;
+}
+.header-total {
+  grid-column: 2;
+  text-align: center;
+}
+.header-minutes {
+  grid-column: 3;
+  text-align: center;
+}
+.header-time {
+  grid-column: 4;
+}
+.header-actions {
+  grid-column: 5;
+  text-align: center;
+}
+
+/* Ensure inputs don't overflow */
+.minutes-input {
+  width: 60px;
+  margin: 0 auto;
+}
+
+.datetime-input {
+  width: 100%;
+  min-width: 180px;
+  max-width: 200px;
+}

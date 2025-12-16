@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { getSessions } from "@/services/sessionService";
+import "./css/SessionModal.css";
 import api from "../api/axios";
+
 
 interface Session {
     id: number;
@@ -25,6 +26,32 @@ const emit = defineEmits<{
     (e: "refresh"): void;
 }>();
 
+// Format time to HH:mm
+const formatTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    return date.toLocaleTimeString('no-NO', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+};
+
+// Format date to DD.MM.YYYY
+const formatDate = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString('no-NO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+};
+
+// Check if we should show date (if different from modal's date)
+const shouldShowDate = (dateTimeString: string) => {
+    const sessionDate = formatDate(dateTimeString);
+    return sessionDate !== props.date;
+};
+
 const handleDeleteSession = async (sessionId: number) => {
     const confirmed = window.confirm("Er du sikker på at du vil slette denne økten?");
     if (!confirmed) return;
@@ -37,55 +64,44 @@ const handleDeleteSession = async (sessionId: number) => {
         alert("Noe gikk galt ved sletting av økten.");
     }
 };
-
-
-
 </script>
 
 <template>
-    <div v-if="visible" class="modal-overlay">
+    <div v-if="visible" class="modal-overlay" @click.self="closeModal">
         <div class="modal">
-            <h2>Økter for {{ date }}</h2>
-            <ul>
-                <li v-for="s in sessions" :key="s.id" class="session-item">
-                    {{ s.subjectName }} — {{ s.minutes }} min — {{ s.startedAt }}
-                    <button @click="handleDeleteSession(s.id)" title="Slett økten">❌</button>
-                </li>
-            </ul>
-            <button @click="closeModal">Lukk</button>
+            <div class="modal-header">
+                <h2>📚 Økter for {{ date }}</h2>
+            </div>
+
+            <div class="modal-content">
+                <div v-if="sessions.length === 0" class="empty-state">
+                    <p>Ingen økter registrert for denne dagen.</p>
+                </div>
+
+                <div v-else class="sessions-container">
+                    <div v-for="s in sessions" :key="s.id" class="session-row">
+                        <div class="session-info">
+                            <div class="subject-cell">{{ s.subjectName }}</div>
+                            <div class="minutes-cell">{{ s.minutes }} min</div>
+                            <div class="time-cell">{{ formatTime(s.startedAt) }}</div>
+                            <div v-if="shouldShowDate(s.startedAt)" class="date-cell">
+                                {{ formatDate(s.startedAt) }}
+                            </div>
+                        </div>
+                        <button class="delete-btn" @click="handleDeleteSession(s.id)" title="Slett økten">
+                            Slett
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <p class="total-summary">
+                    Totalt: <strong>{{sessions.reduce((sum, s) => sum + s.minutes, 0)}} minutter</strong>
+                    ({{ sessions.length }} økt{{ sessions.length !== 1 ? 'er' : '' }})
+                </p>
+                <button class="close-button" @click="closeModal">Lukk</button>
+            </div>
         </div>
     </div>
 </template>
-
-
-
-
-<style scoped>
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.modal {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-}
-</style>

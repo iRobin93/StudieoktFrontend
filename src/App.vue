@@ -3,6 +3,7 @@ import { ref, computed, onMounted, reactive } from "vue"
 import { getSubjects, addSubject, deleteSubject } from "./services/subjectService";
 import { getSessions, createSession } from "./services/sessionService";
 import SessionsModal from "./components/SessionsModal.vue";
+import "./app.css";
 // ---------------- TYPES ----------------
 type Subject = {
   id: number
@@ -121,7 +122,7 @@ onMounted(() => {
 
 <template>
   <div class="app">
-
+    <!-- DATE PICKER -->
     <div class="date-picker">
       <label for="date">Velg dato:</label>
       <input type="date" id="date" v-model="selectedDate" @change="fetchSubjects" />
@@ -135,121 +136,41 @@ onMounted(() => {
       <button @click="handleAddSubject">Legg til</button>
     </div>
 
-    <!-- SUBJECT LIST -->
-    <ul>
-      <li v-for="subject in subjects" :key="subject.id" class="row">
-        <div class="info">
-          <strong>{{ subject.name }}</strong>
-          — {{ subject.totalMinutes }} minutter
-        </div>
+    <!-- TABLE HEADER -->
+    <div class="table-header">
+      <span class="header-fag">Fag</span>
+      <span class="header-total">Tot. Min</span>
+      <span class="header-minutes">Minutter</span>
+      <span class="header-time">Starttid</span>
+      <span class="header-actions">Handlinger</span>
+    </div>
 
-        <div class="actions">
-          <input type="number" min="1" v-model.number="subjectInputs[subject.id].inputMinutes" placeholder="Min" />
+    <!-- And update the row structure slightly: -->
+    <li v-for="subject in subjects" :key="subject.id" class="row">
+      <span class="subject-name">{{ subject.name }}</span>
 
-          <input type="datetime-local" v-model="subjectInputs[subject.id].selectedDateTime" />
+      <span class="total-minutes">{{ subject.totalMinutes }}</span>
 
-          <button title="Legg til økt" @click="handleAddSession(subject)">➕</button>
-          <button title="Slett fag" @click="handleRemoveSubject(subject.id)">❌</button>
-        </div>
+      <input type="number" min="1" v-model.number="subjectInputs[subject.id].inputMinutes" placeholder="Min"
+        class="minutes-input" />
 
-      </li>
-    </ul>
+      <input type="datetime-local" v-model="subjectInputs[subject.id].selectedDateTime" class="datetime-input" />
+
+      <div class="actions">
+        <button title="Legg til økt" @click="handleAddSession(subject)">➕</button>
+        <button title="Slett fag" @click="handleRemoveSubject(subject.id)">❌</button>
+      </div>
+    </li>
 
 
     <!-- TOTAL -->
-    <h3>📊 Total i dag: {{ totalMinutesToday }} min</h3>
-    <button @click="openSessionsModal">Se økter</button>
+    <h3>📊 Totalt i dag: {{ totalMinutesToday }} min</h3>
+
+    <button class="sessions-btn" @click="openSessionsModal">
+      Se økter
+    </button>
+
     <SessionsModal :visible="showSessionsModal" :sessions="sessions" :date="selectedDate"
       @close="handleCloseSessionsModal" @refresh="handleRefresh" />
-
   </div>
 </template>
-
-
-
-<style scoped>
-.app {
-  max-width: 500px;
-  margin: 2rem auto;
-  font-family: system-ui, sans-serif;
-}
-
-.add {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-ul {
-  padding: 0;
-}
-
-li.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.info {
-  flex: 1;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-input[type="number"] {
-  width: 70px;
-}
-
-.inline {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-}
-
-input[type="number"] {
-  width: 70px;
-}
-
-input[type="datetime-local"] {
-  width: 160px;
-}
-
-/* Overlay covers entire screen */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  /* semi-transparent background */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  /* ensures modal is on top of everything */
-}
-
-/* Modal box styling */
-.modal {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  z-index: 10000;
-  /* ensures modal content is above overlay */
-}
-
-/* Optional: style close button */
-.modal button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-</style>
